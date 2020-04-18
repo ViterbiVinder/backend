@@ -36,8 +36,8 @@ public class Auth extends HttpServlet {
 
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
-	 * @param username
-	 * @param password
+	 * @param username | String
+	 * @param password | String
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         // * Only require username and password to log a user in or get their profile
