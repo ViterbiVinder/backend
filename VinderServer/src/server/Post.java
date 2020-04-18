@@ -53,8 +53,7 @@ public class Post extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String username = request.getParameter("username");
         String content = request.getParameter("content");
-        @SuppressWarnings("unchecked")
-		ArrayList<String> tags = (ArrayList<String>) request.getAttribute("tags");
+		String[] tags = request.getParameterValues("tags");
         
         // * Set default JSON to failed login
      	String jsonStr = "{\"Error\": \"Creating Post Failed\"}";
@@ -74,7 +73,7 @@ public class Post extends HttpServlet {
         	jsonStr = "{\"Error\": \"Creating Post Failed. Invalid content.\"}";
 			invalid_request = true;
         }
-        if(tags.size() > 50) {
+        if(tags.length > 50) {
         	jsonStr = "{\"Error\": \"Creating Post Failed. Too many tags.\"}";
 			invalid_request = true;
         }
@@ -93,10 +92,12 @@ public class Post extends HttpServlet {
 			if(rs.next()) {
 				Integer queried_id = rs.getInt("ID");
 				
+				System.out.println(username);
+				System.out.println(queried_id);
 				// * Insert new Post
 				Calendar calendar=Calendar.getInstance();
 		        String date = calendar.getTime().toString();
-				ps = conn.prepareStatement("INSERT INTO Posts (Date, AuthorName, AuthorID, Content) VALUES ('" + date + "', '" + username + "', '" + queried_id + "', '" + content + "' );");
+				ps = conn.prepareStatement("INSERT INTO Posts (Date, AuthorName, AuthorID, Content) VALUES ('" + date + "', '" + username + "', '" + queried_id + "', '" + content + "' );", Statement.RETURN_GENERATED_KEYS);
 				ps.executeUpdate();
 				
 				// * Get Post ID from query
