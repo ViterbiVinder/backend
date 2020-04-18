@@ -27,7 +27,8 @@ CREATE TABLE Posts (
 
 -- Create Tags Table
 CREATE TABLE Tags (
-	`Name` varchar(100) primary key NOT NULL,
+	ID integer primary key NOT NULL AUTO_INCREMENT,
+	`Name` varchar(100) NOT NULL,
     PostID integer NOT NULL,
     foreign key fk3(PostID) references Posts(ID)
 );

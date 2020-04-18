@@ -102,12 +102,12 @@ public class Auth extends HttpServlet {
 
 	/**
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
-	 * @param username
-	 * @param password
-	 * @param email
-	 * @param bio
-	 * @param name
-	 * @param avatar
+	 * @param username | String
+	 * @param password | String
+	 * @param email | String
+	 * @param bio | String
+	 * @param name | String
+	 * @param avatar | String
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String username = request.getParameter("username");
@@ -159,75 +159,74 @@ public class Auth extends HttpServlet {
         if(invalid_request) {
     		out.print(jsonStr);
     		out.flush();
+        } else {
+        	try {
+        		Class.forName("com.mysql.cj.jdbc.Driver");
+        		conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/VinderDB?user=vinderapp&password=password&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC");
+        		ps = conn.prepareStatement("SELECT * from Users where UserName='" + username + "' OR Email='" + email + "';");
+        		rs = ps.executeQuery();
+        		if(rs.next()) {
+        			// * Automatically log user in if information is correct
+        			String queried_username = rs.getString("UserName");
+        			String queried_password = rs.getString("Password");
+        			String queried_email = rs.getString("Email");
+        			if(queried_username.equals(username) && queried_password.equals(password) && queried_email.equals(email)) {
+        				// * User successfully logged in
+        				jsonStr = "{"
+        						+ "\"username\": \"" + rs.getString("UserName") + "\","
+        						+ "\"email\": \"" + rs.getString("Email") + "\","
+        						+ "\"bio\": \"" + rs.getString("Bio") + "\","
+        						+ "\"avatar\": \"" + rs.getString("Avatar") + "\","
+        						+ "\"name\": \"" + rs.getString("Name") + "\","
+        						+ "\"date\": \"" + rs.getString("Date") + "\""
+        						+ "}";
+        			} else {
+        				jsonStr = "{\"Error\": \"Sign-up Failed. User exists and password was incorrect for successful login.\"}";
+        			}
+        		} else {
+        			Calendar calendar=Calendar.getInstance();
+        			String date = calendar.getTime().toString();
+        			ps = conn.prepareStatement("INSERT INTO Users (Date, Name, UserName, Email, Password, Bio, Avatar) VALUES ('" + date + "', '" + name + "', '" + username + "', '" + email + "', '" + password + "', '" + bio + "', '" + avatar + "' );");
+        			ps.executeUpdate();
+        			
+        			jsonStr = "{"
+        					+ "\"username\": \"" + username + "\","
+        					+ "\"email\": \"" + email + "\","
+        					+ "\"bio\": \"" + bio + "\","
+        					+ "\"avatar\": \"" + avatar + "\","
+        					+ "\"name\": \"" + name + "\","
+        					+ "\"date\": \"" + date + "\""
+        					+ "}";	
+        		}
+        		
+        		// * Send Result
+        		out.print(jsonStr);
+        		out.flush();
+        		
+        	} catch (SQLException sqle) {
+        		System.out.println ("SQLException: " + sqle.getMessage());
+        	} catch (ClassNotFoundException e) {
+        		// TODO Auto-generated catch block
+        		e.printStackTrace();
+        	} finally {
+        		try {
+        			if (rs != null) {
+        				rs.close();
+        			}
+        			if (st != null) {
+        				st.close();
+        			}
+        			if (ps != null) {
+        				ps.close();
+        			}
+        			if (conn != null) {
+        				conn.close();
+        			}
+        		} catch (SQLException sqle) {
+        			System.out.println("sqle: " + sqle.getMessage());
+        		}
+        	}
         }
-        
-        try {
-			Class.forName("com.mysql.cj.jdbc.Driver");
-			conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/VinderDB?user=vinderapp&password=password&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC");
-			ps = conn.prepareStatement("SELECT * from Users where UserName='" + username + "' OR Email='" + email + "';");
-			rs = ps.executeQuery();
-			if(rs.next()) {
-				// * Automatically log user in if information is correct
-				String queried_username = rs.getString("UserName");
-				String queried_password = rs.getString("Password");
-				String queried_email = rs.getString("Email");
-				if(queried_username.equals(username) && queried_password.equals(password) && queried_email.equals(email)) {
-					// * User successfully logged in
-					jsonStr = "{"
-							+ "\"username\": \"" + rs.getString("UserName") + "\","
-							+ "\"email\": \"" + rs.getString("Email") + "\","
-							+ "\"bio\": \"" + rs.getString("Bio") + "\","
-							+ "\"avatar\": \"" + rs.getString("Avatar") + "\","
-							+ "\"name\": \"" + rs.getString("Name") + "\","
-							+ "\"date\": \"" + rs.getString("Date") + "\""
-							+ "}";
-				} else {
-					jsonStr = "{\"Error\": \"Sign-up Failed. User exists and password was incorrect for successful login.\"}";
-				}
-			} else {
-				Calendar calendar=Calendar.getInstance();
-		        String date = calendar.getTime().toString();
-				ps = conn.prepareStatement("INSERT INTO Users (Date, Name, UserName, Email, Password, Bio, Avatar) VALUES ('" + date + "', '" + name + "', '" + username + "', '" + email + "', '" + password + "', '" + bio + "', '" + avatar + "' );");
-				ps.executeUpdate();
-				
-				jsonStr = "{"
-						+ "\"username\": \"" + username + "\","
-						+ "\"email\": \"" + email + "\","
-						+ "\"bio\": \"" + bio + "\","
-						+ "\"avatar\": \"" + avatar + "\","
-						+ "\"name\": \"" + name + "\","
-						+ "\"date\": \"" + date + "\""
-						+ "}";	
-			}
-			
-			// * Send Result
-			out.print(jsonStr);
-    		out.flush();
-			
-		} catch (SQLException sqle) {
-			System.out.println ("SQLException: " + sqle.getMessage());
-		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} finally {
-			try {
-				if (rs != null) {
-					rs.close();
-				}
-				if (st != null) {
-					st.close();
-				}
-				if (ps != null) {
-					ps.close();
-				}
-				if (conn != null) {
-					conn.close();
-				}
-			} catch (SQLException sqle) {
-				System.out.println("sqle: " + sqle.getMessage());
-			}
-		}
-        
 	}
 
 }
