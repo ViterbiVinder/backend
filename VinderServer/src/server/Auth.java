@@ -180,7 +180,7 @@ public class Auth extends HttpServlet {
 							+ "\"avatar\": \"" + rs.getString("Avatar") + "\","
 							+ "\"name\": \"" + rs.getString("Name") + "\","
 							+ "\"date\": \"" + rs.getString("Date") + "\""
-							+ "}";				
+							+ "}";
 				} else {
 					jsonStr = "{\"Error\": \"Sign-up Failed. User exists and password was incorrect for successful login.\"}";
 				}
