@@ -161,15 +161,15 @@ public class Post extends HttpServlet {
 		PrintWriter out = response.getWriter();
 		
 		boolean invalid_request = false;
-		if(username.length() == 0 || username.length() > 50) {
+		if(username == null || username.length() == 0 || username.length() > 50) {
 			jsonStr = "{\"Error\": \"Creating Post Failed. Invalid username.\"}";
 			invalid_request = true;
         }
-        if(content.length() == 0 || content.length() > 200) {
+        if(content == null || content.length() == 0 || content.length() > 200) {
         	jsonStr = "{\"Error\": \"Creating Post Failed. Invalid content.\"}";
 			invalid_request = true;
         }
-        if(tags.length > 50) {
+        if(tags == null || tags.length > 50) {
         	jsonStr = "{\"Error\": \"Creating Post Failed. Too many tags.\"}";
 			invalid_request = true;
         }

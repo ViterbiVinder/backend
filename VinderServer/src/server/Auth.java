@@ -130,27 +130,27 @@ public class Auth extends HttpServlet {
 		PrintWriter out = response.getWriter();
 		
 		boolean invalid_request = false;
-		if(username.length() == 0 || username.length() > 50) {
+		if(username == null || username.length() == 0 || username.length() > 50) {
 			jsonStr = "{\"Error\": \"Sign-up Failed. Invalid username.\"}";
 			invalid_request = true;
         }
-        if(password.length() < 6 || password.length() > 50) {
+        if(password == null || password.length() < 6 || password.length() > 50) {
         	jsonStr = "{\"Error\": \"Sign-up Failed. Invalid password.\"}";
 			invalid_request = true;
         }
-        if(email.length() < 6 || email.length() > 50) {
+        if(email == null || email.length() < 6 || email.length() > 50) {
         	jsonStr = "{\"Error\": \"Sign-up Failed. Invalid email.\"}";
 			invalid_request = true;
         }
-        if(bio.length() == 0 || bio.length() > 200) {
+        if(bio == null || bio.length() == 0 || bio.length() > 200) {
         	jsonStr = "{\"Error\": \"Sign-up Failed. Invalid biography.\"}";
 			invalid_request = true;
         }
-        if(name.length() == 0 || name.length() > 50) {
+        if(name == null || name.length() == 0 || name.length() > 50) {
         	jsonStr = "{\"Error\": \"Sign-up Failed. Invalid name.\"}";
 			invalid_request = true;
         }
-        if(avatar.length() == 0 || avatar.length() > 100) {
+        if(avatar == null || avatar.length() == 0 || avatar.length() > 100) {
         	jsonStr = "{\"Error\": \"Sign-up Failed. Invalid avatar url.\"}";
 			invalid_request = true;
         }
