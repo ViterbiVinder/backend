@@ -70,7 +70,7 @@ public class Tags extends HttpServlet {
     			rs = ps.executeQuery();
     			
     			// * Iterate over post results and append to [jsonStr]
-    			jsonStr = "{\"posts\": [";
+    			jsonStr = "{\"posts\": [ ";
     			while(rs.next()) {
     				// * Fetch Post with the [PostID] equal to the current post object
     				ps = conn.prepareStatement("SELECT * from Posts where ID='" + rs.getInt("PostID") + "';");
