@@ -88,7 +88,7 @@ public class Posts extends HttpServlet {
 				}
 				
 				// * Append end of tags array bracket and end of post object curly brace
-				jsonStr += "]},";
+				jsonStr = jsonStr.substring(0, jsonStr.length() - 1) + "]},";
 			}
 			// * Remove last comma after last post object and add bracket closing array of post objects and curly brace ending [jsonStr]
 			jsonStr = jsonStr.substring(0, jsonStr.length() - 1) + "]}";
