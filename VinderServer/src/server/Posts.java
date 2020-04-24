@@ -68,7 +68,7 @@ public class Posts extends HttpServlet {
 			rs = ps.executeQuery();
 			
 			// * Iterate over post results and append to [jsonStr]
-			jsonStr = "{\"posts\": [";
+			jsonStr = "{\"posts\": [ ";
 			while(rs.next()) {
 				jsonStr += "{"
 						+ "\"id\": \"" + rs.getInt("ID") + "\","
@@ -76,7 +76,7 @@ public class Posts extends HttpServlet {
 						+ "\"AuthorName\": \"" + rs.getString("AuthorName") + "\","
 						+ "\"AuthorID\": \"" + rs.getString("AuthorID") + "\","
 						+ "\"Content\": \"" + rs.getString("Content") + "\","
-						+ "\"tags\": ["; 
+						+ "\"tags\": [ "; 
 				
 				// * Fetch Tags that contain the [PostID] equal to the current post object
 				ps = conn.prepareStatement("SELECT * from Tags where PostID='" + rs.getInt("ID") + "';");
