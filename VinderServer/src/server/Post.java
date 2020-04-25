@@ -81,7 +81,7 @@ public class Post extends HttpServlet {
         			rs = ps.executeQuery();
         			
         			// * Iterate over post results and append to [jsonStr]
-        			jsonStr = "{\"posts\": [";
+        			jsonStr = "{\"posts\": [ ";
         			while(rs.next()) {
         				jsonStr += "{"
         						+ "\"id\": \"" + rs.getInt("ID") + "\","
@@ -89,7 +89,7 @@ public class Post extends HttpServlet {
         						+ "\"AuthorName\": \"" + username + "\","
         						+ "\"AuthorID\": \"" + queried_id + "\","
         						+ "\"Content\": \"" + rs.getString("Content") + "\","
-        						+ "\"tags\": ["; 
+        						+ "\"tags\": [ "; 
         				
         				// * Fetch Tags that contain the [PostID] equal to the current post object
         				ps = conn.prepareStatement("SELECT * from Tags where PostID='" + rs.getInt("ID") + "';");
@@ -101,7 +101,7 @@ public class Post extends HttpServlet {
         				}
         				
         				// * Append end of tags array bracket and end of post object curly brace
-        				jsonStr += "]},";
+        				jsonStr = jsonStr.substring(0, jsonStr.length() - 1) + "]},";
         			}
         			// * Remove last comma after last post object and add bracket closing array of post objects and curly brace ending [jsonStr]
         			jsonStr = jsonStr.substring(0, jsonStr.length() - 1) + "]}";
