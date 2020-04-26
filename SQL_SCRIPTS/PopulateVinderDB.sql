@@ -41,7 +41,9 @@ DECLARE str VARCHAR(255);
   while p_counter < p_max do
 	SET str = 'Tommy';
     SET str = CONCAT(str,p_counter,'');
-    INSERT INTO Posts (Date, AuthorName, AuthorID, Content) VALUES ('Sat Apr 18 14:03:10 PDT 2020', str, p_counter, 'Palmam qui meruit ferat!');
+    INSERT INTO Posts (Date, AuthorName, AuthorID, Content) VALUES ('Sat Apr 18 14:03:10 PDT 2020', str, p_counter, 'Post#1 Content. Palmam qui meruit ferat!');
+    INSERT INTO Posts (Date, AuthorName, AuthorID, Content) VALUES ('Sat Apr 18 14:03:10 PDT 2020', str, p_counter, 'Post#2 Content. Palmam qui meruit ferat!');
+    INSERT INTO Posts (Date, AuthorName, AuthorID, Content) VALUES ('Sat Apr 18 14:03:10 PDT 2020', str, p_counter, 'Post#3 Content. Palmam qui meruit ferat!');
     set p_counter=p_counter+1;
   end while;
   commit;
@@ -63,6 +65,10 @@ declare t_counter int unsigned default 1;
   start transaction;
   while t_counter < t_max do
     INSERT INTO Tags (Name, PostID) VALUES ('cs201', t_counter);
+    INSERT INTO Tags (Name, PostID) VALUES ('ee109', t_counter);
+    INSERT INTO Tags (Name, PostID) VALUES ('cs270', t_counter);
+    INSERT INTO Tags (Name, PostID) VALUES ('cs104', t_counter);
+    INSERT INTO Tags (Name, PostID) VALUES ('cs109', t_counter);
     set t_counter=t_counter+1;
   end while;
   commit;
