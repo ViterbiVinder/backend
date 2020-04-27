@@ -81,9 +81,9 @@ public class Tags extends HttpServlet {
         	try {
         		Class.forName("com.mysql.cj.jdbc.Driver");
         		// * Connection string for digitalocean db
-        		conn = DriverManager.getConnection("jdbc:mysql://doadmin:fxqax6g9ebsdwkna@db-mysql-nyc1-50156-do-user-7420753-0.a.db.ondigitalocean.com:25060/VinderDB?ssl-mode=REQUIRED");
+        		//conn = DriverManager.getConnection("jdbc:mysql://doadmin:fxqax6g9ebsdwkna@db-mysql-nyc1-50156-do-user-7420753-0.a.db.ondigitalocean.com:25060/VinderDB?ssl-mode=REQUIRED");
         		// * Connection string for local db
-    			//conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/VinderDB?user=vinderapp&password=password&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC");
+    			conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/VinderDB?user=vinderapp&password=password&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC");
     			if(select_all) {
     				ps = conn.prepareStatement("SELECT DISTINCT Name from Tags LIMIT " + number + ";");
         			rs = ps.executeQuery();
@@ -101,14 +101,14 @@ public class Tags extends HttpServlet {
 	        		out.print(jsonStr);
 	        		out.flush();
     			} else {
-    				ps = conn.prepareStatement("SELECT * from Tags WHERE Name='" + name.toLowerCase() + "';");
+    				ps = conn.prepareStatement("SELECT * from Tags WHERE Name='" + name.toLowerCase() + "' ORDER BY Tags.ID DESC;");
     				rs = ps.executeQuery();
     			
 					// * Iterate over post results and append to [jsonStr]
 					jsonStr = "{\"posts\": [ ";
 					while(rs.next()) {
 						// * Fetch Post with the [PostID] equal to the current post object
-						ps = conn.prepareStatement("SELECT * from Posts where ID='" + rs.getInt("PostID") + "' ORDER BY Posts.ID DESC;");
+						ps = conn.prepareStatement("SELECT * from Posts where ID=" + rs.getInt("PostID") + " ORDER BY Posts.ID DESC;");
 						rs2 = ps.executeQuery();
 						
 						// * Iterate over post (should only be one) and append to [jsonStr]
@@ -133,7 +133,7 @@ public class Tags extends HttpServlet {
 		    						+ "\"tags\": [ ";
 							
 							// * Fetch all the tags related to the current post
-							ps = conn.prepareStatement("SELECT * from Tags WHERE PostID='" + rs2.getInt("ID") + "';");
+							ps = conn.prepareStatement("SELECT * from Tags WHERE PostID=" + rs2.getInt("ID") + " ORDER BY Tags.ID DESC;");
 			    			rs3 = ps.executeQuery();
 			    			
 			    			while(rs3.next()) {

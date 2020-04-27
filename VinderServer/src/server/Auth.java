@@ -53,9 +53,9 @@ public class Auth extends HttpServlet {
 		try {
 			Class.forName("com.mysql.cj.jdbc.Driver");
     		// * Connection string for digitalocean db
-    		conn = DriverManager.getConnection("jdbc:mysql://doadmin:fxqax6g9ebsdwkna@db-mysql-nyc1-50156-do-user-7420753-0.a.db.ondigitalocean.com:25060/VinderDB?ssl-mode=REQUIRED");
+    		//conn = DriverManager.getConnection("jdbc:mysql://doadmin:fxqax6g9ebsdwkna@db-mysql-nyc1-50156-do-user-7420753-0.a.db.ondigitalocean.com:25060/VinderDB?ssl-mode=REQUIRED");
     		// * Connection string for local db
-			//conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/VinderDB?user=vinderapp&password=password&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC");
+			conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/VinderDB?user=vinderapp&password=password&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC");
 			ps = conn.prepareStatement("SELECT * from Users where UserName='" + username + "' AND Password='" + password + "';");
 			rs = ps.executeQuery();
 			if(rs.next()) {
@@ -137,15 +137,15 @@ public class Auth extends HttpServlet {
 			jsonStr = "{\"Error\": \"Sign-up Failed. Invalid username.\"}";
 			invalid_request = true;
         }
-        if(password == null || password.length() < 6 || password.length() > 50) {
+        if(password == null || password.length() < 2 || password.length() > 50) {
         	jsonStr = "{\"Error\": \"Sign-up Failed. Invalid password.\"}";
 			invalid_request = true;
         }
-        if(email == null || email.length() < 6 || email.length() > 50) {
+        if(email == null || email.length() < 2 || email.length() > 50) {
         	jsonStr = "{\"Error\": \"Sign-up Failed. Invalid email.\"}";
 			invalid_request = true;
         }
-        if(bio == null || bio.length() == 0 || bio.length() > 200) {
+        if(bio == null || bio.length() == 0) {
         	jsonStr = "{\"Error\": \"Sign-up Failed. Invalid biography.\"}";
 			invalid_request = true;
         }
@@ -153,7 +153,7 @@ public class Auth extends HttpServlet {
         	jsonStr = "{\"Error\": \"Sign-up Failed. Invalid name.\"}";
 			invalid_request = true;
         }
-        if(avatar == null || avatar.length() == 0 || avatar.length() > 100) {
+        if(avatar == null || avatar.length() == 0) {
         	jsonStr = "{\"Error\": \"Sign-up Failed. Invalid avatar url.\"}";
 			invalid_request = true;
         }
@@ -166,9 +166,9 @@ public class Auth extends HttpServlet {
         	try {
         		Class.forName("com.mysql.cj.jdbc.Driver");
         		// * Connection string for digitalocean db
-        		conn = DriverManager.getConnection("jdbc:mysql://doadmin:fxqax6g9ebsdwkna@db-mysql-nyc1-50156-do-user-7420753-0.a.db.ondigitalocean.com:25060/VinderDB?ssl-mode=REQUIRED");
+        		//conn = DriverManager.getConnection("jdbc:mysql://doadmin:fxqax6g9ebsdwkna@db-mysql-nyc1-50156-do-user-7420753-0.a.db.ondigitalocean.com:25060/VinderDB?ssl-mode=REQUIRED");
         		// * Connection string for local db
-    			//conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/VinderDB?user=vinderapp&password=password&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC");
+        		conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/VinderDB?user=vinderapp&password=password&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC");
         		ps = conn.prepareStatement("SELECT * from Users where UserName='" + username + "' OR Email='" + email + "';");
         		rs = ps.executeQuery();
         		if(rs.next()) {
@@ -192,7 +192,7 @@ public class Auth extends HttpServlet {
         		} else {
         			Calendar calendar=Calendar.getInstance();
         			String date = calendar.getTime().toString();
-        			ps = conn.prepareStatement("INSERT INTO Users (Date, Name, UserName, Email, Password, Bio, Avatar) VALUES ('" + date + "', '" + name + "', '" + username + "', '" + email + "', '" + password + "', '" + bio + "', '" + avatar + "' );");
+        			ps = conn.prepareStatement("INSERT INTO Users (Date, Name, UserName, Email, Password, Bio, Avatar) VALUES ('" + date + "', '" + name + "', '" + username + "', '" + email + "', '" + password + "', '" + bio + "', '" + avatar + "');");
         			ps.executeUpdate();
         			
         			jsonStr = "{"

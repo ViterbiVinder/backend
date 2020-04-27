@@ -8,10 +8,10 @@ CREATE TABLE Users (
     `Date` varchar(100),
     `Name` varchar(100),
     UserName varchar(100) UNIQUE NOT NULL,
-    Email varchar(100),
+    Email varchar(200),
     `Password` varchar(100),
-    Bio varchar(200),
-    Avatar varchar(100)
+    Bio varchar(500),
+    Avatar varchar(500)
 );
 
 -- Create Posts Table
@@ -20,7 +20,7 @@ CREATE TABLE Posts (
     `Date` varchar(50) NOT NULL,
     AuthorName varchar(50) NOT NULL,
     AuthorID integer Not NULL,
-    Content varchar(50),
+    Content varchar(500),
     foreign key fk1(AuthorName) references Users(`UserName`),
     foreign key fk2(AuthorID) references Users(ID)
 );
