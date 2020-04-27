@@ -43,7 +43,10 @@ public class User extends HttpServlet {
      			
 		try {
 			Class.forName("com.mysql.cj.jdbc.Driver");
-			conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/VinderDB?user=vinderapp&password=password&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC");
+    		// * Connection string for digitalocean db
+    		conn = DriverManager.getConnection("jdbc:mysql://doadmin:fxqax6g9ebsdwkna@db-mysql-nyc1-50156-do-user-7420753-0.a.db.ondigitalocean.com:25060/VinderDB?ssl-mode=REQUIRED");
+    		// * Connection string for local db
+			//conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/VinderDB?user=vinderapp&password=password&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC");
 			ps = conn.prepareStatement("SELECT * from Users;");
 			rs = ps.executeQuery();
 			jsonStr = "{\"users\": [ ";
@@ -68,7 +71,7 @@ public class User extends HttpServlet {
 			out.flush();
 		} catch (SQLException sqle) {
 			System.out.println ("SQLException: " + sqle.getMessage());
-		} catch (ClassNotFoundException e) {
+		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} finally {

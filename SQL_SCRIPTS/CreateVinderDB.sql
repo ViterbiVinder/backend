@@ -37,3 +37,8 @@ CREATE TABLE Tags (
 CREATE USER 'vinderapp'@'localhost' IDENTIFIED BY 'password';
 GRANT ALL PRIVILEGES ON VinderDB.* TO 'vinderapp'@'localhost';
 FLUSH PRIVILEGES;
+
+-- Create Credentials for Vinder Server hosted on digitalocean
+-- CREATE USER 'vinderapp'@'174.138.59.149' IDENTIFIED BY 'password';
+-- GRANT ALL PRIVILEGES ON VinderDB.* TO 'vinderapp'@'174.138.59.149';
+-- FLUSH PRIVILEGES;

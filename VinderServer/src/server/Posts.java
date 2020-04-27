@@ -44,8 +44,7 @@ public class Posts extends HttpServlet {
 		try {
 			number = Integer.parseInt(num_param);
 		} catch (NumberFormatException nfe) {
-			System.out.println("Number '" + number + "' could not be parsed into an integer.");
-			System.out.println("Returning 100 most recent posts to client.");
+			// * Ignore
 		}
 		
 		if(number == null || number <= 0) {
@@ -63,8 +62,11 @@ public class Posts extends HttpServlet {
 		
 		try {
     		Class.forName("com.mysql.cj.jdbc.Driver");
-    		conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/VinderDB?user=vinderapp&password=password&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC");
-			ps = conn.prepareStatement("SELECT * from Posts ORDER BY 'ID' DESC LIMIT " + number + ";");
+    		// * Connection string for digitalocean db
+    		conn = DriverManager.getConnection("jdbc:mysql://doadmin:fxqax6g9ebsdwkna@db-mysql-nyc1-50156-do-user-7420753-0.a.db.ondigitalocean.com:25060/VinderDB?ssl-mode=REQUIRED");
+    		// * Connection string for local db
+    		//conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/VinderDB?user=vinderapp&password=password&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC");
+			ps = conn.prepareStatement("SELECT * from Posts ORDER BY Posts.ID DESC LIMIT " + number + ";");
 			rs = ps.executeQuery();
 			
 			// * Iterate over post results and append to [jsonStr]
@@ -75,11 +77,20 @@ public class Posts extends HttpServlet {
 						+ "\"date\": \"" + rs.getString("Date") + "\","
 						+ "\"AuthorName\": \"" + rs.getString("AuthorName") + "\","
 						+ "\"AuthorID\": \"" + rs.getString("AuthorID") + "\","
-						+ "\"Content\": \"" + rs.getString("Content") + "\","
-						+ "\"tags\": [ "; 
+						+ "\"Content\": \"" + rs.getString("Content") + "\",";
+				
+				// * Fetch Username Avatar
+				ps = conn.prepareStatement("SELECT * from Users where Users.UserName='" + rs.getString("AuthorName") + "';");
+				rs2 = ps.executeQuery();
+				
+				if(rs2.next()) {
+					jsonStr += "\"Avatar\": \"" + rs2.getString("Avatar") + "\",";
+				} 
+				
+				jsonStr += "\"tags\": [ "; 
 				
 				// * Fetch Tags that contain the [PostID] equal to the current post object
-				ps = conn.prepareStatement("SELECT * from Tags where PostID='" + rs.getInt("ID") + "';");
+				ps = conn.prepareStatement("SELECT * from Tags where Tags.PostID=" + rs.getInt("ID") + ";");
 				rs2 = ps.executeQuery();
 				
 				// * Iterate over tags and append to [jsonStr]
@@ -99,7 +110,7 @@ public class Posts extends HttpServlet {
     		
     	} catch (SQLException sqle) {
     		System.out.println ("SQLException: " + sqle.getMessage());
-    	} catch (ClassNotFoundException e) {
+    	} catch (Exception e) {
     		// TODO Auto-generated catch block
     		e.printStackTrace();
     	} finally {

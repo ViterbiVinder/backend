@@ -6,7 +6,7 @@ delimiter #
 create procedure populate_users_vinder_db()
 begin
 
-declare v_max int unsigned default 1000;
+declare v_max int unsigned default 100;
 declare v_counter int unsigned default 1;
 DECLARE str VARCHAR(255);
 DECLARE em VARCHAR(255);
@@ -33,7 +33,7 @@ delimiter #
 create procedure populate_posts_vinder_db()
 begin
 
-declare p_max int unsigned default 1000;
+declare p_max int unsigned default 100;
 declare p_counter int unsigned default 1;
 DECLARE str VARCHAR(255);
 
@@ -59,7 +59,7 @@ delimiter #
 create procedure populate_tags_vinder_db()
 begin
 
-declare t_max int unsigned default 1000;
+declare t_max int unsigned default 100;
 declare t_counter int unsigned default 1;
 
   start transaction;

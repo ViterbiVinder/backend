@@ -8,7 +8,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.ArrayList;
+//import java.util.ArrayList;
 import java.util.Calendar;
 
 import javax.servlet.ServletException;
@@ -28,6 +28,7 @@ public class Post extends HttpServlet {
 	private static PreparedStatement ps = null;
 	private static ResultSet rs = null;
 	private static ResultSet rs2 = null;
+	private static ResultSet rs3 = null;
 	
     /**
      * @see HttpServlet#HttpServlet()
@@ -66,38 +67,41 @@ public class Post extends HttpServlet {
         } else {
         	try {
         		Class.forName("com.mysql.cj.jdbc.Driver");
-        		conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/VinderDB?user=vinderapp&password=password&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC");
-        		ps = conn.prepareStatement("SELECT * from Users where UserName='" + username + "';");
+        		// * Connection string for digitalocean db
+        		conn = DriverManager.getConnection("jdbc:mysql://doadmin:fxqax6g9ebsdwkna@db-mysql-nyc1-50156-do-user-7420753-0.a.db.ondigitalocean.com:25060/VinderDB?ssl-mode=REQUIRED");
+        		// * Connection string for local db
+    			//conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/VinderDB?user=vinderapp&password=password&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC");
+        		ps = conn.prepareStatement("SELECT * from VinderDB.Users where UserName='" + username + "';");
         		rs = ps.executeQuery();
         		if(rs.next()) {
         			Integer queried_id = rs.getInt("ID");
         			
-        			System.out.println(username);
-        			System.out.println(queried_id);
         			// * Insert new Post
-        			Calendar calendar=Calendar.getInstance();
-        			String date = calendar.getTime().toString();
-        			ps = conn.prepareStatement("SELECT * from Posts where AuthorID='" + queried_id + "' AND AuthorName='" + username + "';");
-        			rs = ps.executeQuery();
+        			//Calendar calendar=Calendar.getInstance();
+        			//String date = calendar.getTime().toString();
+        			ps = conn.prepareStatement("SELECT * from VinderDB.Posts where AuthorID=" + queried_id + " AND AuthorName='" + username + "';");
+        			rs2 = ps.executeQuery();
         			
         			// * Iterate over post results and append to [jsonStr]
         			jsonStr = "{\"posts\": [ ";
-        			while(rs.next()) {
+        			while(rs2.next()) {
+        				Integer post_id = rs2.getInt("ID");
         				jsonStr += "{"
-        						+ "\"id\": \"" + rs.getInt("ID") + "\","
-        						+ "\"date\": \"" + rs.getString("Date") + "\","
+        						+ "\"id\": \"" + post_id + "\","
+        						+ "\"date\": \"" + rs2.getString("Date") + "\","
         						+ "\"AuthorName\": \"" + username + "\","
         						+ "\"AuthorID\": \"" + queried_id + "\","
-        						+ "\"Content\": \"" + rs.getString("Content") + "\","
+        						+ "\"Content\": \"" + rs2.getString("Content") + "\","
+        						+ "\"Avatar\": \"" + rs.getString("Avatar") + "\","
         						+ "\"tags\": [ "; 
         				
         				// * Fetch Tags that contain the [PostID] equal to the current post object
-        				ps = conn.prepareStatement("SELECT * from Tags where PostID='" + rs.getInt("ID") + "';");
-        				rs2 = ps.executeQuery();
+        				ps = conn.prepareStatement("SELECT * from VinderDB.Tags where Tags.PostID=" + post_id + ";");
+        				rs3 = ps.executeQuery();
         				
         				// * Iterate over tags and append to [jsonStr]
-        				while(rs2.next()) {
-        					jsonStr += "\"" + rs2.getString("Name") + "\",";
+        				while(rs3.next()) {
+        					jsonStr += "\"" + rs3.getString("Name") + "\",";
         				}
         				
         				// * Append end of tags array bracket and end of post object curly brace
@@ -115,7 +119,7 @@ public class Post extends HttpServlet {
         		
         	} catch (SQLException sqle) {
         		System.out.println ("SQLException: " + sqle.getMessage());
-        	} catch (ClassNotFoundException e) {
+        	} catch (Exception e) {
         		// TODO Auto-generated catch block
         		e.printStackTrace();
         	} finally {
@@ -169,7 +173,7 @@ public class Post extends HttpServlet {
         	jsonStr = "{\"Error\": \"Creating Post Failed. Invalid content.\"}";
 			invalid_request = true;
         }
-        if(tags == null || tags.length > 50) {
+        if(tags != null && tags.length > 50) {
         	jsonStr = "{\"Error\": \"Creating Post Failed. Too many tags.\"}";
 			invalid_request = true;
         }
@@ -181,14 +185,15 @@ public class Post extends HttpServlet {
         } else {
         	try {
         		Class.forName("com.mysql.cj.jdbc.Driver");
-        		conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/VinderDB?user=vinderapp&password=password&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC");
+        		// * Connection string for digitalocean db
+        		conn = DriverManager.getConnection("jdbc:mysql://doadmin:fxqax6g9ebsdwkna@db-mysql-nyc1-50156-do-user-7420753-0.a.db.ondigitalocean.com:25060/VinderDB?ssl-mode=REQUIRED");
+        		// * Connection string for local db
+    			//conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/VinderDB?user=vinderapp&password=password&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC");
         		ps = conn.prepareStatement("SELECT * from Users where UserName='" + username + "';");
         		rs = ps.executeQuery();
         		if(rs.next()) {
         			Integer queried_id = rs.getInt("ID");
         			
-        			System.out.println(username);
-        			System.out.println(queried_id);
         			// * Insert new Post
         			Calendar calendar=Calendar.getInstance();
         			String date = calendar.getTime().toString();
@@ -202,11 +207,14 @@ public class Post extends HttpServlet {
         				generatedKey = result_set.getInt(1);
         			}
         			
-        			// * Create tags with link to post ID
-        			for(String tag : tags) {
-        				ps = conn.prepareStatement("INSERT INTO Tags (Name, PostID) VALUES ('" + tag + "', '" + generatedKey + "' );");
-        				ps.executeUpdate();
+        			if(tags != null && tags.length > 0) {
+        				// * Create tags with link to post ID
+        				for(String tag : tags) {
+        					ps = conn.prepareStatement("INSERT INTO Tags (Name, PostID) VALUES ('" + tag.toLowerCase() + "', '" + generatedKey + "' );");
+        					ps.executeUpdate();
+        				}        				
         			}
+        			
         			
         			jsonStr = "{"
         					+ "\"username\": \"" + username + "\","
@@ -225,7 +233,7 @@ public class Post extends HttpServlet {
         		
         	} catch (SQLException sqle) {
         		System.out.println ("SQLException: " + sqle.getMessage());
-        	} catch (ClassNotFoundException e) {
+        	} catch (Exception e) {
         		// TODO Auto-generated catch block
         		e.printStackTrace();
         	} finally {
